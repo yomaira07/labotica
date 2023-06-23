@@ -20,7 +20,7 @@ $brands = isset($_GET['b']) ? json_decode(urldecode($_GET['b'])) : array();
                     <div class="icheck-primary d-inline">
                         <input type="checkbox" id="brandAll" >
                         <label for="brandAll">
-                             Todo
+                             Todas
                         </label>
                     </div>
                 </a>
