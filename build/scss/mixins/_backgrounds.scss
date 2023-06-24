@@ -3,9 +3,9 @@
 //
 
 // Background Variant
-@mixin background-variant($name, $color) {
+@mixin background-variant($name,$color) {
   .bg-#{$name} {
-    background-color: #{$color} !important;
+    background-color: #{119822} !important;
 
     &,
     > a {

@@ -25,7 +25,8 @@ $brands = isset($_GET['b']) ? json_decode(urldecode($_GET['b'])) : array();
                     </div>
                 </a>
                 <?php 
-                $qry = $conn->query("SELECT * FROM brands where delete_flag =0 order by name asc");
+                $qry = $conn->query("SELECT * FROM brands                       
+                where delete_flag =0 order by name asc");
                 while($row=$qry->fetch_assoc()):
                 ?>
                 <li class="list-group-item list-group-item-action">
@@ -78,7 +79,12 @@ $brands = isset($_GET['b']) ? json_decode(urldecode($_GET['b'])) : array();
                         $where = "";
                         if(count($brands)>0)
                         $where = " and p.brand_id in (".implode(",",$brands).") " ;
-                        $products = $conn->query("SELECT p.*,b.name as bname,c.category FROM `products` p inner join brands b on p.brand_id = b.id inner join categories c on p.category_id = c.id where p.status = 1 {$where} order by rand() ");
+                        $products = $conn->query("SELECT p.*,b.name as bname,c.category 
+                        FROM `products` p 
+                        inner join brands b on p.brand_id = b.id 
+                        inner join categories c on p.category_id = c.id
+                        inner join inventory i on i.product_id = p.id
+                        where p.status = 1 {$where} order by rand() ");
                         while($row = $products->fetch_assoc()):
                             $upload_path = base_app.'/uploads/product_'.$row['id'];
                             $img = "";

@@ -69,6 +69,7 @@ Class Master extends DBConnection {
 					$resp['msg'] .= " Archivo de imagen es inválida";
 				}
 				$temp = imagescale($uploadfile,200,200);
+				
 				if(is_file(base_app.$fname))
 				unlink(base_app.$fname);
 				if($_FILES['img']['type'] == 'image/jpeg')
@@ -494,7 +495,9 @@ Class Master extends DBConnection {
 				$data .= "('{$order_id}','{$row['pid']}','{$row['quantity']}','{$row['price']}', $total)";
 			endwhile;
 			$list_sql = "INSERT INTO `order_list` (order_id,inventory_id,quantity,price,total) VALUES {$data} ";
+			var_dump($list_sql);
 			$save_olist = $this->conn->query($list_sql);
+			
 			if($this->capture_err())
 				return $this->capture_err();
 			if($save_olist){

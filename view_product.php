@@ -1,5 +1,10 @@
 ﻿<?php 
- $products = $conn->query("SELECT p.*,b.name as bname,c.category FROM `products` p inner join brands b on p.brand_id = b.id inner join categories c on p.category_id = c.id where md5(p.id) = '{$_GET['id']}' ");
+ $products = $conn->query("SELECT p.*,b.name as bname,c.category 
+ FROM `products` p
+ inner join brands b on p.brand_id = b.id 
+ inner join categories c on p.category_id = c.id
+ inner join inventory i on i.product_id = p.id
+  where md5(p.id) = '{$_GET['id']}' ");
  if($products->num_rows > 0){
      foreach($products->fetch_assoc() as $k => $v){
          $$k= stripslashes($v);
@@ -93,7 +98,12 @@
         <h2 class="fw-bolder mb-4">Productos Relacionados</h2>
         <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-3 row-cols-xl-4 justify-content-center">
         <?php 
-            $products = $conn->query("SELECT p.*,b.name as bname,c.category  FROM `products` p inner join brands b on p.brand_id = b.id inner join categories c on p.category_id = c.id where p.status = 1 and (p.category_id = '{$category_id}' or p.brand_id = '{$brand_id}') and p.id !='{$id}' order by rand() limit 4 ");
+            $products = $conn->query("SELECT p.*,b.name as bname,c.category 
+             FROM `products` p 
+             inner join brands b on p.brand_id = b.id 
+             inner join categories c on p.category_id = c.id
+             inner join inventory i on i.product_id = p.id
+              where p.status = 1 and (p.category_id = '{$category_id}' or p.brand_id = '{$brand_id}') and p.id !='{$id}' order by rand() limit 4 ");
             while($row = $products->fetch_assoc()):
                 $upload_path = base_app.'/uploads/product_'.$row['id'];
                 $img = "";
@@ -106,7 +116,7 @@
                 foreach($row as $k=> $v){
                     $row[$k] = trim(stripslashes($v));
                 }
-                $rinventory = $conn->query("SELECT distinct(`price`) FROM inventory where product_id = ".$row['id']." order by `price` asc");
+                $rinventory = $conn->query("SELECT distinct(`price`) FROM nventoriy where product_id = ".$row['id']." order by `price` asc");
                 $rinv = array();
                 while($ir = $rinventory->fetch_assoc()){
                     $rinv[] = format_num($ir['price']);

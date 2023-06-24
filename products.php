@@ -2,35 +2,43 @@
 $title = "";
 $sub_title = "";
 if(isset($_GET['c']) && isset($_GET['s'])){
-    $cat_qry = $conn->query("SELECT * FROM categories where md5(id) = '{$_GET['c']}'");
+    $cat_qry = $conn->query("SELECT c.* FROM categories c
+      inner join products p on p.category_id = c.id
+      inner join inventory i on i.product_id = p.id
+     where md5(c.id) = '{$_GET['c']}'");
     if($cat_qry->num_rows > 0){
         $result =$cat_qry->fetch_assoc();
         $title = $result['category'];
         $cat_description = $result['description'];
     }
- $sub_cat_qry = $conn->query("SELECT * FROM sub_categories where md5(id) = '{$_GET['s']}'");
+/* $sub_cat_qry = $conn->query("SELECT * FROM sub_categories where md5(id) = '{$_GET['s']}'");
     if($sub_cat_qry->num_rows > 0){
         $result =$sub_cat_qry->fetch_assoc();
         $sub_title = $result['sub_category'];
         $sub_cat_description = $result['description'];
-    }
+    }*/
 }
 elseif(isset($_GET['c'])){
-    $cat_qry = $conn->query("SELECT * FROM categories where md5(id) = '{$_GET['c']}'");
+    $cat_qry1 =("SELECT c.* FROM categories c
+    inner join products p on p.category_id = c.id
+    inner join inventory i on i.product_id = p.id
+     where md5(c.id) = '{$_GET['c']}'");
+  //  var_dump( $cat_qry1);
+    $cat_qry= $conn->query( $cat_qry1);
     if($cat_qry->num_rows > 0){
         $result =$cat_qry->fetch_assoc();
         $title = $result['category'];
         $cat_description = $result['description'];
     }
 }
-elseif(isset($_GET['s'])){
+/*elseif(isset($_GET['s'])){
     $sub_cat_qry = $conn->query("SELECT * FROM sub_categories where md5(id) = '{$_GET['s']}'");
     if($sub_cat_qry->num_rows > 0){
         $result =$sub_cat_qry->fetch_assoc();
         $sub_title = $result['sub_category'];
         $sub_cat_description = $result['description'];
     }
-}
+}*/
 $brands = isset($_GET['b']) ? json_decode(urldecode($_GET['b'])) : array();
 ?>
 <!-- Header-->
@@ -47,18 +55,23 @@ $brands = isset($_GET['b']) ? json_decode(urldecode($_GET['b'])) : array();
     <div class="container">
         <div class="row">
             <div class="col-md-3 border-right mb-2 pb-3">
-                <h4><b>Brands</b></h4>
+                <h4><b>MARCAS</b></h4>
                 <ul class="list-group">
                     <a href="" class="list-group-item list-group-item-action">
                         <div class="icheck-primary d-inline">
                             <input type="checkbox" id="brandAll" >
                             <label for="brandAll">
-                                All
+                                TODAS
                             </label>
                         </div>
                     </a>
                     <?php 
-                    $qry = $conn->query("SELECT * FROM brands where status =1 order by name asc");
+                    $qry_ =("SELECT b.* FROM brands b           
+                     
+                     where b.status =1  
+                    order by b.name asc");
+                    //var_dump($qry_);
+                    $qry= $conn->query( $qry_);
                     while($row=$qry->fetch_assoc()):
                     ?>
                     <li class="list-group-item list-group-item-action">
@@ -92,7 +105,11 @@ $brands = isset($_GET['b']) ? json_decode(urldecode($_GET['b'])) : array();
                             $bwhere = "";
                             if(count($brands)>0)
                                 $bwhere = " and p.brand_id in (".implode(",",$brands).") " ;
-                            $products = $conn->query("SELECT p.*,b.name as bname, c.category FROM `products` p inner join brands b on p.brand_id = b.id inner join categories c on p.category_id = c.id where p.status = 1 {$whereData} {$bwhere} order by rand() ");
+                            $products = $conn->query("SELECT p.*,b.name as bname, c.category FROM `products` p 
+                            inner join brands b on p.brand_id = b.id 
+                            inner join categories c on p.category_id = c.id
+                            inner join inventory i on i.product_id = p.id
+                            where p.status = 1 {$whereData} {$bwhere} order by rand() ");
                             while($row = $products->fetch_assoc()):
                                 $upload_path = base_app.'/uploads/product_'.$row['id'];
                                 $img = "";
@@ -132,8 +149,8 @@ $brands = isset($_GET['b']) ? json_decode(urldecode($_GET['b'])) : array();
                                         <!-- Product price-->
                                         <span><b>Price: </b><?php echo $price ?></span>
                                     </div>
-                                    <p class="m-0"><small>Brand: <?php echo $row['bname'] ?></small></p>
-                                    <p class="m-0"><small>Category: <?php echo $row['category'] ?></small></p>
+                                    <p class="m-0"><small>MARCA: <?php echo $row['bname'] ?></small></p>
+                                    <p class="m-0"><small>CATEGORIA: <?php echo $row['category'] ?></small></p>
                                 </div>
                             </a>
                         </div>
